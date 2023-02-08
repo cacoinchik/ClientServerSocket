@@ -10,16 +10,27 @@ public class Server {
 
             System.out.println("Server started");
 
-            while (true)
-                try (Phone phone = new Phone(server)) {
+            while (true) {
+
+                Phone phone = new Phone(server);
+                new Thread(() -> {
                     String request = phone.readLine();
                     System.out.println("Request: " + request);
                     String response = (int) (Math.random() * 30 - 10) + "";
+                    try {
+                        Thread.sleep(4000);
+                    } catch (InterruptedException e) {
+                    }
                     phone.writeLine(response);
                     System.out.println("Response: " + response);
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                }
+                    try {
+                        phone.close();
+                    } catch (IOException e) {
+
+                    }
+                }).start();
+
+            }
 
         } catch (IOException e) {
             throw new RuntimeException(e);
